@@ -3,6 +3,7 @@
 #Variables
 defaultconf="/home/jacob/baby_John_Project/default_john.conf"
 confPATH="/home/jacob/baby_John_Project/test_john.conf"
+targetfile="/home/jacob/baby_John_Project/targetfile"
 OPTIONS="Single Incremental Wordlist Extrenal OtherOptions Quit"
 
 IOPTIONS="ASCII LM_ASCII Alnum Alpha LowerNum UpperNum LowerSpace Lower Upper Digits Info"
@@ -42,14 +43,33 @@ select opt in $OPTIONS; do
 #Incremental
 	elif [ "$opt" = "Incremental" ]; then
 		echo "Please enter the username of the account you would like to crack"
-		echo "or enter ALL to attempt to crack all accounts in the target file"
+		echo 'or enter "ALL" to attempt to crack all accounts in the target file'
 		read account
 		echo "Please enter the minimum length of the password to be cracked."
 		read min
 		echo "Please enter the maximum length of the password to be cracked."
 		read max
-		echo "Please enter the target for the single crack"
+		echo "Please enter the target for the incremental crack"
 		read target
+		if grep -q "$account:"'$0' "$target"
+		then
+			format="descrypt"
+		elif grep -q "$account:"'$1' "$target"
+		then	
+			format="md5crypt"
+		elif grep -q "$account:"'$2' "$target"
+		then	
+			format="bcrypt"
+		elif grep -q "$account:"'$5' "$target"
+		then	
+			format="sha256crypt"
+		elif grep -q "$account:"'$6' "$target"
+		then	
+			format="sha512crypt"	
+		else
+			echo "Encryption type could not be detected, please input an encryption type"
+			read format	
+		fi
 		echo "Please select an inciemental mode or choose Info for information"
 		echo "on each mode."
 		select iopt in $IOPTIONS; do
@@ -57,81 +77,81 @@ select opt in $OPTIONS; do
 				sed -i "s/MinLen = 0/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=ascii $target
+					john --incremental=ascii --format=$format $target
 				else
-					john --incremental=ascii -u=$account $target
+					john --incremental=ascii --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "LM_ASCII" ]; then
 				sed -i "s/MinLen = 0/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 7/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=lm_ascii $target
+					john --incremental=lm_ascii --format=$format $target
 				else
-					john --incremental=lm_ascii -u=$account $target
+					john --incremental=lm_ascii --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "Alnum" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=alnum $target
+					john --incremental=alnum --format=$format $target
 				else
-					john --incremental=alnum -u=$account $target
+					john --incremental=alnum --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "Alpha" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=alpha $target
+					john --incremental=alpha --format=$format $target
 				else
-					john --incremental=alpha -u=$account $target
+					john --incremental=alpha --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "LowerNum" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=lowernum $target
+					john --incremental=lowernum --format=$format $target
 				else
-					john --incremental=lowernum -u=$account $target
+					john --incremental=lowernum --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "UpperNum" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=uppernum $target
+					john --incremental=uppernum --format=$format $target
 				else
-					john --incremental=uppernum -u=$account $target
+					john --incremental=uppernum --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "LowerSpace" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=lowerspace $target
+					john --incremental=lowerspace --format=$format $target
 				else
-					john --incremental=lowerspace -u=$account $target
+					john --incremental=lowerspace --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "Lower" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=lower $target
+					john --incremental=lower --format=$format $target
 				else
-					john --incremental=lower -u=$account $target
+					john --incremental=lower --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "Upper" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 13/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=upper $target
+					john --incremental=upper --format=$format $target
 				else
-					john --incremental=upper -u=$account $target
+					john --incremental=upper --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "Digits" ]; then
 				sed -i "s/MinLen = 1/MinLen = $min/g" $confPATH
 				sed -i "s/MaxLen = 20/MaxLen = $max/g" $confPATH
 				if [ "$account" = "ALL" ]; then
-					john --incremental=digits $target
+					john --incremental=digits --format=$format $target
 				else
-					john --incremental=digits -u=$account $target
+					john --incremental=digits --format=$format -u=$account $target
 				fi
 			elif [ "$iopt" = "Info" ]; then
 				echo "ASCII - uses all 95 printable ASCII characters"
